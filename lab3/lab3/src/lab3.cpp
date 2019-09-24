@@ -1,6 +1,6 @@
 //============================================================================
 // Name        : lab3.cpp
-// Author      : Jacob Offersen
+// Author      : 
 // Version     :
 // Copyright   : Your copyright notice
 // Description :
@@ -8,8 +8,8 @@
 
 #include <iostream>
 
+
 int main() {
-	std::cout << "" << std::endl; // prints
 
 	return 0;
 }
