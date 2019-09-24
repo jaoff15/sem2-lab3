@@ -20,14 +20,18 @@ typedef enum {
 
 class Gpio {
 public:
-	Gpio(std::string pin);
+	Gpio();
 	virtual ~Gpio();
+
+	void initializePin(std::string pin);
 
 	void setDirection(const Direction dir);
 	void setValue(const bool value);
 	bool getValue();
 
 private:
+	bool initialized_ = false;
+
 	std::string path_;
 	std::string pin_;
 };

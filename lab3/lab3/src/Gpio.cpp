@@ -7,7 +7,15 @@
 
 #include "Gpio.h"
 
-Gpio::Gpio(std::string pin) {
+Gpio::Gpio() {
+
+}
+
+Gpio::~Gpio() {
+
+}
+
+void Gpio::initializePin(std::string pin) {
 	pin_ = pin;
 	// Define path
 	std::string export_path = "/sys/class/gpio/export";
@@ -17,7 +25,7 @@ Gpio::Gpio(std::string pin) {
 	// Check if the file was actually opened
 	if (!export_file.is_open()) {
 		std::cerr << "Unable to open " << export_path << std::endl;
-//		return -1;
+		//		return -1;
 	} else {
 		// Write pin numbers to file
 		export_file << pin << std::endl;
@@ -29,54 +37,56 @@ Gpio::Gpio(std::string pin) {
 
 		// Write direction
 		Gpio::setDirection(in);
+		initialized_ = true;
 	}
 }
 
-Gpio::~Gpio() {
-
-}
-
 void Gpio::setDirection(const Direction dir) {
-	std::ofstream file(path_.c_str());
-	if (!file.is_open()) {
-		std::cerr << "Unable to open " << path_ << std::endl;
+	if (initialized_) {
+		std::ofstream file(path_.c_str());
+		if (!file.is_open()) {
+			std::cerr << "Unable to open " << path_ << std::endl;
 //			return -1;
-	} else {
-		// Write directions to the file
-		file << (dir == in) ? "in" : "out";
+		} else {
+			// Write directions to the file
+			file << (dir == in) ? "in" : "out";
 
-		// Close the file
-		file.close();
+			// Close the file
+			file.close();
+		}
 	}
 }
 
 void Gpio::setValue(const bool value) {
-	// Define path
-	std::string write_path = path_ + "/value";
+	if (initialized_) {
+		// Define path
+		std::string write_path = path_ + "/value";
 
-	// Open file
-	std::ofstream write_file(write_path.c_str());
-	if (!write_file.is_open()) {
-		std::cerr << "Unable to open " << write_path << std::endl;
+		// Open file
+		std::ofstream write_file(write_path.c_str());
+		if (!write_file.is_open()) {
+			std::cerr << "Unable to open " << write_path << std::endl;
 //		return -1;
-	} else {
-		// Write value
-		write_file << (value == true) ? "1" : "0";
+		} else {
+			// Write value
+			write_file << (value == true) ? "1" : "0";
+		}
 	}
 }
 
 bool Gpio::getValue() {
-	// Define read path
-	std::string read_path = path_ + "/value";
-	std::ifstream read_file(read_path.c_str());
-	if (!read_file.is_open()) {
-		std::cerr << "Unable to open " << read_path << std::endl;
-		return -1;
+	if (initialized_) {
+		// Define read path
+		std::string read_path = path_ + "/value";
+		std::ifstream read_file(read_path.c_str());
+		if (!read_file.is_open()) {
+			std::cerr << "Unable to open " << read_path << std::endl;
+			return -1;
+		}
+
+		// read value
+		std::string value;
+		read_file >> value;
+		return value == "1";
 	}
-
-	// read value
-	std::string value;
-	read_file >> value;
-	return value == "1";
-
 }
