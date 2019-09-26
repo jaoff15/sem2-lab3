@@ -15,49 +15,62 @@ Gpio::~Gpio() {
 
 }
 
-void Gpio::initializePin(std::string pin) {
+void Gpio::setPinNumber(const std::string pin) {
 	pin_ = pin;
+}
+
+void Gpio::setGpioPath(const std::string path) {
+	gpio_path_ = path;
+}
+
+int Gpio::exportPin() {
 	// Define path
-	std::string export_path = "/sys/class/gpio/export";
+	std::string export_path = gpio_path_ + "/export";
 	// Open file
 	std::ofstream export_file(export_path.c_str());
 
 	// Check if the file was actually opened
 	if (!export_file.is_open()) {
 		std::cerr << "Unable to open " << export_path << std::endl;
-		//		return -1;
-	} else {
-		// Write pin numbers to file
-		export_file << pin << std::endl;
-
-		// Close the file
-		export_file.close();
-
-		path_ = "/sys/class/gpio/gpio" + pin_ + "/direction";
-
-		// Write direction
-		Gpio::setDirection(in);
-		initialized_ = true;
+		return -1;
 	}
+	// Write pin numbers to file
+	export_file << pin_ << std::endl;
+
+	// Close the file
+	export_file.close();
+
+	path_ = gpio_path_ + "/gpio" + pin_ + "/direction";
+
+	// Write direction
+	Gpio::setDirection(in);
+	initialized_ = true;
+
+	return 0;
 }
 
-void Gpio::setDirection(const Direction dir) {
+int Gpio::unexportPin() {
+
+}
+
+int Gpio::setDirection(const Direction dir) {
 	if (initialized_) {
 		std::ofstream file(path_.c_str());
 		if (!file.is_open()) {
 			std::cerr << "Unable to open " << path_ << std::endl;
-//			return -1;
-		} else {
-			// Write directions to the file
-			file << (dir == in) ? "in" : "out";
-
-			// Close the file
-			file.close();
+			return -1;
 		}
+		// Write directions to the file
+		file << (dir == in) ? "in" : "out";
+
+		// Close the file
+		file.close();
+		return 0;
 	}
+	return 1;
 }
 
-void Gpio::setValue(const bool value) {
+int Gpio::setValue(const bool value) {
 	if (initialized_) {
 		// Define path
 		std::string write_path = path_ + "/value";
@@ -66,15 +79,16 @@ void Gpio::setValue(const bool value) {
 		std::ofstream write_file(write_path.c_str());
 		if (!write_file.is_open()) {
 			std::cerr << "Unable to open " << write_path << std::endl;
-//		return -1;
-		} else {
-			// Write value
-			write_file << (value == true) ? "1" : "0";
+			return -1;
 		}
+		// Write value
+		write_file << (value == true) ? "1" : "0";
+		return 0;
 	}
+	return 1;
 }
 
-bool Gpio::getValue() {
+int Gpio::getValue(bool *value) {
 	if (initialized_) {
 		// Define read path
 		std::string read_path = path_ + "/value";
@@ -85,8 +99,10 @@ bool Gpio::getValue() {
 		}
 
 		// read value
-		std::string value;
-		read_file >> value;
-		return value == "1";
+		std::string read_value;
+		read_file >> read_value;
+		*value = read_value == "1";
+		return 0;
 	}
+	return 1;
 }

@@ -14,31 +14,35 @@ Keypad::Keypad() {
 Keypad::~Keypad() {
 
 }
-void Keypad::initializeButtons() {
+void Keypad::init() {
 	// Init all buttons in col. Coloums are initialized as outputs with default value of high.
 	for (u8 pin = 0; pin < KEYPAD_PIN_COL_LEN; pin++) {
 		std::string pin_id = std::to_string(KEYPAD_PIN_COL_BASE + pin);
-		column_[KEYPAD_PIN_COL_LEN - pin].initializePin(pin_id);
+		column_[KEYPAD_PIN_COL_LEN - pin].setGpioPath("/sys/class/gpio");
+		column_[KEYPAD_PIN_COL_LEN - pin].setPinNumber(pin_id);
+		column_[KEYPAD_PIN_COL_LEN - pin].exportPin();
 		column_[KEYPAD_PIN_COL_LEN - pin].setDirection(out);
 		column_[KEYPAD_PIN_COL_LEN - pin].setValue(true);
 	}
 	// Init all buttons in row. The rows are initialized as inputs.
 	for (u8 pin = 0; pin < KEYPAD_PIN_ROW_LEN; pin++) {
 		std::string pin_id = std::to_string(KEYPAD_PIN_ROW_BASE + pin);
-		row_[KEYPAD_PIN_ROW_LEN - pin].initializePin(pin_id);
+		row_[KEYPAD_PIN_ROW_LEN - pin].setGpioPath("/sys/class/gpio");
+		row_[KEYPAD_PIN_ROW_LEN - pin].setPinNumber(pin_id);
+		row_[KEYPAD_PIN_ROW_LEN - pin].exportPin();
 		row_[KEYPAD_PIN_ROW_LEN - pin].setDirection(in);
 	}
 	initialized_ = true;
 }
 
-std::string Keypad::getKeyPressed() {
+std::string Keypad::NumpadDriver() {
 	if (!initialized_) {
 		return "";
 	}
 	std::string keys_pressed = "";
 	for (u8 col = 0; col < width_; col++) {
 		for (u8 row = 0; row < height_; row++) {
-			if (getPinValue(col, row)) {
+			if (getValue(col, row)) {
 				keys_pressed += keys_[col][row];
 			}
 		}
@@ -46,14 +50,15 @@ std::string Keypad::getKeyPressed() {
 	return keys_pressed;
 }
 
-bool Keypad::getPinValue(const u8 col, const u8 row) {
+bool Keypad::getValue(const u8 col, const u8 row) {
 	/* Set column low
 	 * Read row
 	 * Set column high
 	 * Return pin value
 	 * */
 	column_[col].setValue(false);
-	bool pin_value = row_[row].getValue();
+	bool pin_value;
+	row_[row].getValue(&pin_value);
 	column_[col].setValue(true);
 	return pin_value;
 

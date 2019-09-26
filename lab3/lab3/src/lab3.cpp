@@ -11,8 +11,9 @@
 
 int main() {
 	Keypad keypad;
+	keypad.init();
 	while (1) {
-		std::string key = keypad.getKeyPressed();
+		std::string key = keypad.NumpadDriver();
 		if (key != "") {
 			std::cout << key << std::endl;
 		}

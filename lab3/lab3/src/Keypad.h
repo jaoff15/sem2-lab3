@@ -24,7 +24,8 @@ public:
 	Keypad();
 	virtual ~Keypad();
 
-	std::string getKeyPressed();
+	void init();
+	std::string NumpadDriver();
 
 private:
 	bool initialized_ = false;
@@ -38,9 +39,7 @@ private:
 	const std::string keys_[4][4] = { { "1", "2", "3", "A" }, { "4", "5", "6",
 			"B" }, { "7", "8", "9", "C" }, { "0", "F", "E", "D" } };
 
-	void initializeButtons();
-
-	bool getPinValue(const u8 col, const u8 row);
+	bool getValue(const u8 col, const u8 row);
 };
 
 #endif /* KEYPAD_H_ */
