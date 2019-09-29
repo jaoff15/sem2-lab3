@@ -15,16 +15,25 @@ Display::~Display() {
 
 }
 
-void Display::DisplayDriver() {
-
-}
 void Display::init() {
 	initGpios();
 	initDisplay();
 }
 void Display::print(std::string str) {
+	clear();								  // Clear display
 	setDataBits((std::bitset<8>) "00000010"); // Return home
 
+	for (int j = 0; j < DISPLAY_HEIGHT; j++) {			// For both rows
+		for (int i = 0; i < DISPLAY_WIDTH; i++) {	// For each character
+
+			unsigned int character_id = j * DISPLAY_WIDTH + i;
+			std::string character = "";
+			if (character_id < str.length()) {
+				character = str[character_id];
+			}
+			setDataBits(character);
+		}
+	}
 }
 void Display::clear() {
 // RS R/W DB7 DB6 DB5 DB4 DB3 DB2 DB1 DB0
@@ -91,8 +100,19 @@ int Display::initDisplay() {
 }
 
 void Display::setDataBits(const std::string str) {
+	// Switch nibbles
+	// str     = 12345678
+	// databit = 56781234
+	char character = 0b00000000;
+	character |= (str[0] & 0b00001111) << 4;
+	character |= (str[0] & 0b11110000) >> 4;
+
+	// Nibbles stay in place
+	// str 	   = 12345678
+	// databit = 12345678
+	character = str[0];
 	for (int i = 0; i < DISPLAY_DATA_LEN; i++) {
-		data_bit_[i].setValue((bool) str[i]);
+		data_bit_[i].setValue((bool) character[i]);
 	}
 }
 

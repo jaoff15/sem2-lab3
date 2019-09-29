@@ -21,12 +21,14 @@
 #define DISPLAY_RW_PIN 1013
 #define DISPLAY_ENABLE_PIN 1014
 
+#define DISPLAY_HEIGHT 2
+#define DISPLAY_WIDTH 16
+
 class Display {
 public:
 	Display();
 	virtual ~Display();
 
-	void DisplayDriver();
 	void init();
 	void print(std::string str);
 	void clear();
