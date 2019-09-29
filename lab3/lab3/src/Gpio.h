@@ -34,7 +34,7 @@ public:
 private:
 	bool initialized_ = false;
 
-	std::string gpio_path_;
+	std::string gpio_path_ = "/sys/class/gpio";
 	std::string path_;
 	std::string pin_;
 };

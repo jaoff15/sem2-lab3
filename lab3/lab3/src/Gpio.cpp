@@ -17,6 +17,7 @@ Gpio::~Gpio() {
 
 void Gpio::setPinNumber(const std::string pin) {
 	pin_ = pin;
+	exportPin();
 }
 
 void Gpio::setGpioPath(const std::string path) {

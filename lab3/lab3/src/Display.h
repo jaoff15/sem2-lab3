@@ -28,7 +28,7 @@ public:
 
 	void DisplayDriver();
 	void init();
-	void print();
+	void print(std::string str);
 	void clear();
 
 private:

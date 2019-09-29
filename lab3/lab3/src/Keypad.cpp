@@ -18,18 +18,14 @@ void Keypad::init() {
 	// Init all buttons in col. Coloums are initialized as outputs with default value of high.
 	for (u8 pin = 0; pin < KEYPAD_PIN_COL_LEN; pin++) {
 		std::string pin_id = std::to_string(KEYPAD_PIN_COL_BASE + pin);
-		column_[KEYPAD_PIN_COL_LEN - pin].setGpioPath("/sys/class/gpio");
 		column_[KEYPAD_PIN_COL_LEN - pin].setPinNumber(pin_id);
-		column_[KEYPAD_PIN_COL_LEN - pin].exportPin();
 		column_[KEYPAD_PIN_COL_LEN - pin].setDirection(out);
 		column_[KEYPAD_PIN_COL_LEN - pin].setValue(true);
 	}
 	// Init all buttons in row. The rows are initialized as inputs.
 	for (u8 pin = 0; pin < KEYPAD_PIN_ROW_LEN; pin++) {
 		std::string pin_id = std::to_string(KEYPAD_PIN_ROW_BASE + pin);
-		row_[KEYPAD_PIN_ROW_LEN - pin].setGpioPath("/sys/class/gpio");
 		row_[KEYPAD_PIN_ROW_LEN - pin].setPinNumber(pin_id);
-		row_[KEYPAD_PIN_ROW_LEN - pin].exportPin();
 		row_[KEYPAD_PIN_ROW_LEN - pin].setDirection(in);
 	}
 	initialized_ = true;
@@ -62,8 +58,4 @@ bool Keypad::getValue(const u8 col, const u8 row) {
 	column_[col].setValue(true);
 	return pin_value;
 
-//	if (col == 3 && row == 0) {
-//		return true;
-//	}
-//	return false;
 }
