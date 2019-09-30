@@ -9,11 +9,11 @@
 #define DISPLAY_H_
 
 #include "Gpio.h"
+#include "Sleep.h"
+
 #include <iostream>       // std::cout
 #include <string>         // std::string
 #include <bitset>         // std::bitset
-#include <chrono>         // std::chrono::seconds
-#include <thread>         // std::this_thread::sleep_for
 
 #define DISPLAY_DATA_BASE 1016
 #define DISPLAY_DATA_LEN 8
@@ -23,6 +23,8 @@
 
 #define DISPLAY_HEIGHT 2
 #define DISPLAY_WIDTH 16
+
+#define BYTE 8
 
 class Display {
 public:
@@ -38,6 +40,7 @@ private:
 	Gpio register_select_;
 	Gpio read_write_;
 	Gpio enable_;
+	Sleep sleep;
 
 	void initGpios();
 	int initDisplay();
@@ -47,6 +50,9 @@ private:
 	void sendCommand(const std::string command);
 	void sendData(const std::string data);
 	void sendData(const char data);
+
+	void sleepMicrosecond(const unsigned int time);
+	void sleepMillisecond(const unsigned int time);
 };
 
 #endif /* DISPLAY_H_ */
