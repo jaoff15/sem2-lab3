@@ -16,13 +16,14 @@ Display::~Display() {
 }
 
 void Display::init() {
-	initGpios();
+//	initGpios();
 	initDisplay();
 }
 
 void Display::print(std::string str) {
 	clear();  										// Clear display
-	setDataBits((std::bitset<8>) "00000010");  		// Return home
+//	setDataBits((std::bitset<8>) "00000010");  		// Return home
+	setDataBits("00000010");
 
 	for (int j = 0; j < DISPLAY_HEIGHT; j++) {  	// For each row
 		for (int i = 0; i < DISPLAY_WIDTH; i++) {  	// For each character in row
@@ -40,7 +41,8 @@ void Display::print(std::string str) {
 void Display::clear() {
 // RS R/W DB7 DB6 DB5 DB4 DB3 DB2 DB1 DB0
 // 0   0   0   0   0   0   0   0   0   1
-	setDataBits((std::bitset<8>) "00000001");
+//	setDataBits((std::bitset<8>) "00000001");
+	setDataBits("00000001");
 }
 
 void Display::initGpios() {
@@ -73,7 +75,8 @@ int Display::initDisplay() {
 // 0   0   0   0   1  DL   N   F   X   X
 	register_select_.setValue(false);
 	read_write_.setValue(false);
-	setDataBits((std::bitset<8>) "00110000");
+//	setDataBits((std::bitset<8>) "00110000");
+	setDataBits("00110000");
 // Bit 4: 1 = 8 bit data length
 // Bit 3: 1 = 2 active display lines
 // Bit 2: 0 = Font 5x8 bits
@@ -84,7 +87,8 @@ int Display::initDisplay() {
 // Display On/Off Control
 // RS R/W DB7 DB6 DB5 DB4 DB3 DB2 DB1 DB0
 // 0   0   0   0   0   0   1   D   C   B
-	setDataBits((std::bitset<8>) "00001001");
+//	setDataBits((std::bitset<8>) "00001001");
+	setDataBits("00001001");
 
 // Wait 37us
 	sleep.sleepMicrosecond(37);
@@ -107,13 +111,16 @@ void Display::setDataBits(const std::string str) {
 		bool bit = (character >> i) & 1;
 		data_bit_[i].setValue(bit);
 	}
-}
-
-void Display::setDataBits(const std::bitset<DISPLAY_DATA_LEN> bit) {
-	for (int i = 0; i < BYTE; i++) {
-		data_bit_[i].setValue(bit[i]);
+	for (int i = BYTE - 1; i >= 0; i--) {
+		bool bit = (character >> i) & 1;
 	}
 }
+
+//void Display::setDataBits(const std::bitset<DISPLAY_DATA_LEN> bit) {
+//	for (int i = 0; i < BYTE; i++) {
+//		data_bit_[i].setValue(bit[i]);
+//	}
+//}
 
 void Display::pulseEnableSignal() {
 	enable_.setValue(false);
@@ -141,11 +148,13 @@ void Display::sendData(const std::string data) {
 }
 
 void Display::sendData(const char data) {
+	std::string data_string;
+	data_string += data;
 	sleep.sleepMillisecond(2);
 	register_select_.setValue(true);  	// Register Select 	= true
 	read_write_.setValue(false);		// Read/write 		= false
 //	enable_.setValue(true);				// Enable 			= true
-	setDataBits(data);  				// Set data bit
+	setDataBits(data_string);  				// Set data bit
 //	enable_.setValue(false);			// Enable 			= false;
 	pulseEnableSignal();				// Pulse enable signal to send data
 }

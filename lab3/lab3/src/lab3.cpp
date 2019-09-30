@@ -8,15 +8,21 @@
 
 #include <iostream>
 #include "Keypad.h"
+#include "Display.h"
 
 int main() {
-	Keypad keypad;
-	keypad.init();
-	while (1) {
-		std::string key = keypad.NumpadDriver();
-		if (key != "") {
-			std::cout << key << std::endl;
-		}
-	}
+
+	Display display;
+	display.init();
+	display.print("Test123");
+
+//	Keypad keypad;
+//	keypad.init();
+//	while (1) {
+//		std::string key = keypad.NumpadDriver();
+//		if (key != "") {
+//			std::cout << key << std::endl;
+//		}
+//	}
 	return 0;
 }
