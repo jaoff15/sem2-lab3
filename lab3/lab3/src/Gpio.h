@@ -31,6 +31,8 @@ public:
 	int setValue(const bool value);
 	int getValue(bool *value);
 
+//	std::string getPin();
+
 private:
 	bool initialized_;
 

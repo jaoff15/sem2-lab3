@@ -18,6 +18,7 @@ int main() {
 
 	Keypad keypad;
 	keypad.init();
+
 	std::cout << "Started" << std::endl;
 	while (1) {
 		std::string key = keypad.NumpadDriver();

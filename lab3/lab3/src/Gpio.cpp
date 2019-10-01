@@ -130,8 +130,12 @@ int Gpio::getValue(bool *value) {
 		// read value
 		std::string read_value;
 		read_file >> read_value;
-		*value = read_value == "1";
+		*value = (read_value == "1");
 		return 0;
 	}
 	return 1;
 }
+
+//std::string Gpio::getPin() {
+//	return pin_;
+//}

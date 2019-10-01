@@ -40,8 +40,6 @@ private:
 
 	std::string last_keys_pressed;
 
-//	std::string keys_[4][4];
-
 	bool getValue(const u8 col, const u8 row);
 };
 

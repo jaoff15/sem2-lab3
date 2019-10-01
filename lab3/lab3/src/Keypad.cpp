@@ -21,20 +21,23 @@ Keypad::~Keypad() {
 void Keypad::init() {
 // Init all buttons in col. Coloums are initialized as outputs with default value of high.
 	for (u8 pin = 1; pin <= KEYPAD_PIN_COL_LEN; pin++) {
-		std::cout << "Col pin: " << std::to_string(KEYPAD_PIN_COL_LEN - pin) << std::endl;
-		std::string pin_id = std::to_string(KEYPAD_PIN_COL_BASE + pin);
-		column_[KEYPAD_PIN_COL_LEN - pin].setPinNumber(pin_id);
-		column_[KEYPAD_PIN_COL_LEN - pin].setDirection(out);
-		column_[KEYPAD_PIN_COL_LEN - pin].setValue(true);
+		const int pin_number = KEYPAD_PIN_COL_LEN - pin;
+		std::string pin_id = std::to_string(KEYPAD_PIN_COL_BASE + pin - 1);
+		column_[pin_number].setPinNumber(pin_id);
+		column_[pin_number].setDirection(out);
+		column_[pin_number].setValue(true);
+//		std::cout << column_[pin_number].getPin() << std::endl;
 	}
 // Init all buttons in row. The rows are initialized as inputs.
 	for (u8 pin = 1; pin <= KEYPAD_PIN_ROW_LEN; pin++) {
-		std::cout << "Row pin: " << std::to_string(KEYPAD_PIN_ROW_LEN - pin) << std::endl;
-		std::string pin_id = std::to_string(KEYPAD_PIN_ROW_BASE + pin);
-		row_[KEYPAD_PIN_ROW_LEN - pin].setPinNumber(pin_id);
-		row_[KEYPAD_PIN_ROW_LEN - pin].setDirection(in);
+		const int pin_number = KEYPAD_PIN_ROW_LEN - pin;
+		std::string pin_id = std::to_string(KEYPAD_PIN_ROW_BASE + pin - 1);
+		row_[pin_number].setPinNumber(pin_id);
+		row_[pin_number].setDirection(in);
+//		std::cout << row_[pin_number].getPin() << std::endl;
 	}
 	initialized_ = true;
+
 }
 
 std::string Keypad::NumpadDriver() {
@@ -45,7 +48,7 @@ std::string Keypad::NumpadDriver() {
 	for (u8 col = 0; col < width_; col++) {
 		for (u8 row = 0; row < height_; row++) {
 			if (!getValue(col, row)) {
-				keys_pressed += keys_[col][row];
+				keys_pressed += keys_[row][col];
 			}
 		}
 	}
