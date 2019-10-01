@@ -19,6 +19,8 @@
 #define KEYPAD_PIN_ROW_BASE 996
 #define KEYPAD_PIN_ROW_LEN 4
 
+const std::string keys_[4][4] = { { "1", "2", "3", "A" }, { "4", "5", "6", "B" }, { "7", "8", "9", "C" }, { "0", "F", "E", "D" } };
+
 class Keypad {
 public:
 	Keypad();
@@ -28,16 +30,17 @@ public:
 	std::string NumpadDriver();
 
 private:
-	bool initialized_ = false;
+	bool initialized_;
 
-	const u8 width_ = 4;
-	const u8 height_ = 4;
+	u8 width_;
+	u8 height_;
 
 	Gpio column_[4];
 	Gpio row_[4];
 
-	const std::string keys_[4][4] = { { "1", "2", "3", "A" }, { "4", "5", "6",
-			"B" }, { "7", "8", "9", "C" }, { "0", "F", "E", "D" } };
+	std::string last_keys_pressed;
+
+//	std::string keys_[4][4];
 
 	bool getValue(const u8 col, const u8 row);
 };

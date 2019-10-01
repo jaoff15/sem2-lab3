@@ -32,9 +32,9 @@ public:
 	int getValue(bool *value);
 
 private:
-	bool initialized_ = false;
+	bool initialized_;
 
-	std::string gpio_path_ = "/sys/class/gpio";
+	std::string gpio_path_;
 	std::string path_;
 	std::string pin_;
 };

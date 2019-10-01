@@ -8,7 +8,8 @@
 #include "Gpio.h"
 
 Gpio::Gpio() {
-
+	initialized_ = false;
+	gpio_path_ = "/sys/class/gpio";
 }
 
 Gpio::~Gpio() {
@@ -27,6 +28,7 @@ void Gpio::setGpioPath(const std::string path) {
 int Gpio::exportPin() {
 	// Define path
 	std::string export_path = gpio_path_ + "/export";
+
 	// Open file
 	std::ofstream export_file(export_path.c_str());
 
@@ -35,13 +37,14 @@ int Gpio::exportPin() {
 		std::cerr << "Unable to open " << export_path << std::endl;
 		return -1;
 	}
+
 	// Write pin numbers to file
 	export_file << pin_ << std::endl;
 
 	// Close the file
 	export_file.close();
 
-	path_ = gpio_path_ + "/gpio" + pin_ + "/direction";
+	path_ = gpio_path_ + "/gpio" + pin_;
 
 	// Write direction
 	Gpio::setDirection(in);
@@ -51,18 +54,39 @@ int Gpio::exportPin() {
 }
 
 int Gpio::unexportPin() {
+	// Define path
+	std::string unexport_path = gpio_path_ + "/unexport";
+	// Open file
+	std::ofstream unexport_file(unexport_path.c_str());
 
+	// Check if the file was actually opened
+	if (!unexport_file.is_open()) {
+		std::cerr << "Unable to open " << unexport_path << std::endl;
+		return -1;
+	}
+	// Write pin numbers to file
+	unexport_file << pin_ << std::endl;
+
+	// Close the file
+	unexport_file.close();
+
+	return 0;
 }
 
 int Gpio::setDirection(const Direction dir) {
 	if (initialized_) {
-		std::ofstream file(path_.c_str());
+		std::string direction_path = path_ + "/direction";
+		std::ofstream file(direction_path.c_str());
 		if (!file.is_open()) {
-			std::cerr << "Unable to open " << path_ << std::endl;
+			std::cerr << "Unable to open " << direction_path << std::endl;
 			return -1;
 		}
 		// Write directions to the file
-		file << (dir == in) ? "in" : "out";
+		if (dir == out) {
+			file << "out";
+		} else {
+			file << "in";
+		}
 
 		// Close the file
 		file.close();
@@ -83,7 +107,11 @@ int Gpio::setValue(const bool value) {
 			return -1;
 		}
 		// Write value
-		write_file << (value == true) ? "1" : "0";
+		if (value == true) {
+			write_file << "1";
+		} else {
+			write_file << "0";
+		}
 		return 0;
 	}
 	return 1;
