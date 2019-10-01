@@ -8,17 +8,18 @@
 
 #include <iostream>
 #include "Keypad.h"
-//#include "Display.h"
+#include "Display.h"
 
 int main() {
-
-//	Display display;
-//	display.init();
-//	display.print("Test123");
+//	std::cout << "Instanciating display" << std::endl;
+	Display display;
+//	std::cout << "Display initializing" << std::endl;
+	display.init();
+	display.print("Dickbutt");
 
 	Keypad keypad;
 	keypad.init();
-
+//
 	std::cout << "Started" << std::endl;
 	while (1) {
 		std::string key = keypad.NumpadDriver();
