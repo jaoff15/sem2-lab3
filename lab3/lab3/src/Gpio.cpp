@@ -136,3 +136,6 @@ int Gpio::getValue(bool *value) {
 	return 1;
 }
 
+std::string Gpio::getPin() {
+	return pin_;
+}

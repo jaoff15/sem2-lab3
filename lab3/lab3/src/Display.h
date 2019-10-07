@@ -15,11 +15,11 @@
 #include <string>         // std::string
 #include <bitset>         // std::bitset
 
-#define DISPLAY_DATA_BASE 	1016
-#define DISPLAY_DATA_LEN 	8
 #define DISPLAY_RS_PIN 		1012
 #define DISPLAY_RW_PIN 		1013
 #define DISPLAY_ENABLE_PIN 	1014
+#define DISPLAY_DATA_BASE 	1016
+#define DISPLAY_DATA_LEN 	8
 
 #define DISPLAY_HEIGHT 		2
 #define DISPLAY_WIDTH 		16
@@ -33,7 +33,6 @@ public:
 
 	void init();
 	void print(std::string str);
-	void clear();
 
 private:
 	Gpio data_bit_[DISPLAY_DATA_LEN];
@@ -50,6 +49,13 @@ private:
 	void sendCommand(const std::string command);
 	void sendData(const std::string data);
 	void sendData(const char data);
+
+	void setFunction();
+	void displayOnOffFunction();
+	void clear();
+	void home();
+	void setEntryMode();
+	void setEntryAddress();
 
 };
 
