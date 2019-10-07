@@ -26,23 +26,25 @@ void Gpio::setGpioPath(const std::string path) {
 }
 
 int Gpio::exportPin() {
-	// Define path
-	std::string export_path = gpio_path_ + "/export";
+	if (!LOCAL) {
+		// Define path
+		std::string export_path = gpio_path_ + "/export";
 
-	// Open file
-	std::ofstream export_file(export_path.c_str());
+		// Open file
+		std::ofstream export_file(export_path.c_str());
 
-	// Check if the file was actually opened
-	if (!export_file.is_open()) {
-		std::cerr << "Unable to open " << export_path << std::endl;
-		return -1;
+		// Check if the file was actually opened
+		if (!export_file.is_open()) {
+			std::cerr << "Unable to open " << export_path << std::endl;
+			return -1;
+		}
+
+		// Write pin numbers to file
+		export_file << pin_ << std::endl;
+
+		// Close the file
+		export_file.close();
 	}
-
-	// Write pin numbers to file
-	export_file << pin_ << std::endl;
-
-	// Close the file
-	export_file.close();
 
 	path_ = gpio_path_ + "/gpio" + pin_;
 
@@ -54,27 +56,29 @@ int Gpio::exportPin() {
 }
 
 int Gpio::unexportPin() {
-	// Define path
-	std::string unexport_path = gpio_path_ + "/unexport";
-	// Open file
-	std::ofstream unexport_file(unexport_path.c_str());
+	if (!LOCAL) {
+		// Define path
+		std::string unexport_path = gpio_path_ + "/unexport";
+		// Open file
+		std::ofstream unexport_file(unexport_path.c_str());
 
-	// Check if the file was actually opened
-	if (!unexport_file.is_open()) {
-		std::cerr << "Unable to open " << unexport_path << std::endl;
-		return -1;
+		// Check if the file was actually opened
+		if (!unexport_file.is_open()) {
+			std::cerr << "Unable to open " << unexport_path << std::endl;
+			return -1;
+		}
+		// Write pin numbers to file
+		unexport_file << pin_ << std::endl;
+
+		// Close the file
+		unexport_file.close();
 	}
-	// Write pin numbers to file
-	unexport_file << pin_ << std::endl;
-
-	// Close the file
-	unexport_file.close();
 
 	return 0;
 }
 
 int Gpio::setDirection(const Direction dir) {
-	if (initialized_) {
+	if (initialized_ && !LOCAL) {
 		std::string direction_path = path_ + "/direction";
 		std::ofstream file(direction_path.c_str());
 		if (!file.is_open()) {
@@ -96,7 +100,7 @@ int Gpio::setDirection(const Direction dir) {
 }
 
 int Gpio::setValue(const bool value) {
-	if (initialized_) {
+	if (initialized_ && !LOCAL) {
 		// Define path
 		std::string write_path = path_ + "/value";
 
@@ -118,7 +122,7 @@ int Gpio::setValue(const bool value) {
 }
 
 int Gpio::getValue(bool *value) {
-	if (initialized_) {
+	if (initialized_ && !LOCAL) {
 		// Define read path
 		std::string read_path = path_ + "/value";
 		std::ifstream read_file(read_path.c_str());

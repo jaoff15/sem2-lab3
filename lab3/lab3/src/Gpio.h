@@ -14,6 +14,8 @@
 #include <sstream>
 #include <unistd.h>
 
+#define LOCAL false
+
 typedef enum {
 	in, out
 } Direction;

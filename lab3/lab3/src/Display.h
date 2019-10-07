@@ -46,7 +46,7 @@ private:
 	void setDataBits(const std::string str);
 	void setDataBits(const std::bitset<DISPLAY_DATA_LEN> bit);
 	void pulseEnableSignal();
-	void sendCommand(const std::string command);
+	void sendCommand(const std::bitset<10> command);
 	void sendData(const std::string data);
 	void sendData(const char data);
 

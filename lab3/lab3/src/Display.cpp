@@ -16,7 +16,9 @@ Display::~Display() {
 }
 
 void Display::init() {
+	std::cout << "Init GPIO" << std::endl;
 	initGpios();
+	std::cout << "Init Display" << std::endl;
 	initDisplay();
 }
 
@@ -27,9 +29,9 @@ void Display::print(std::string str) {
 	for (int j = 0; j < DISPLAY_HEIGHT; j++) {  	// For each row
 		for (int i = 0; i < DISPLAY_WIDTH; i++) {  	// For each character in row
 			unsigned int character_id = j * DISPLAY_WIDTH + i;
-			std::cout << character_id << std::endl;
 			if (character_id < str.length()) {
 				sendData(str[character_id]);		// Send data character to display
+				std::cout << character_id << " ";
 			} else {
 				break;								// If the string is empty. Break the loop
 			}
@@ -62,33 +64,34 @@ void Display::initGpios() {
 		data_bit_[i].setDirection(out);
 	}
 }
+
 int Display::initDisplay() {
 // Power on
-
+	std::cout << "Power On" << std::endl;
 // Wait 20ms
-//	sleep.millisecond(20);
-	sleep.millisecond(50);
+	sleep.millisecond(20);
+//	sleep.millisecond(50);
 
 // Set function
 	setFunction();
 
 // Wait 37us
-//	sleep.microsecond(37);
-	sleep.microsecond(60);
+	sleep.microsecond(37);
+//	sleep.microsecond(60);
 
 // Display On/Off Control
 	displayOnOffFunction();
 
 // Wait 37us
-//	sleep.microsecond(37);
-	sleep.microsecond(60);
+	sleep.microsecond(37);
+//	sleep.microsecond(60);
 
 // Display clear
 	clear();
 
 // Wait 1.52ms
-//	sleep.microsecond(1520);
-	sleep.millisecond(2);
+	sleep.microsecond(1520);
+//	sleep.millisecond(2);
 
 	setEntryMode();
 	sleep.microsecond(60);
@@ -138,10 +141,26 @@ void Display::pulseEnableSignal() {
 	enable_.setValue(true);
 }
 
-void Display::sendCommand(const std::string command) {
-	register_select_.setValue(false);  	// Low for instruction transfer
-	read_write_.setValue(false);		// Set to write mode
-	setDataBits(command);  				// Set data bit
+void Display::sendCommand(const std::bitset<10> command) {
+
+	std::cout << "Command ";
+	register_select_.setValue(command[command.size() - 1]);  	// Low for instruction transfer
+	read_write_.setValue(command[command.size() - 2]);  	// Set to write mode
+//	std::cout << "(RS)" << command[0] << " (RW)" << command[1] << " ";
+	std::cout << command[0] << command[1];
+//	for (unsigned int i = BYTE; i > 0; --i) {
+	for (unsigned int i = 0; i < BYTE; i++) {
+		const int id = i;
+//		std::cout << " " << id << ":";
+		data_bit_[id].setValue(command[id]);
+//		std::cout << "(" << data_bit_[id].getPin() << ")";
+		if (command[id]) {
+			std::cout << "1";
+		} else
+			std::cout << "0";
+	}
+	std::cout << std::endl;
+	pulseEnableSignal();
 }
 
 void Display::sendData(const std::string data) {
@@ -164,57 +183,44 @@ void Display::sendData(const char data) {
 void Display::setFunction() {
 	// RS R/W DB7 DB6 DB5 DB4 DB3 DB2 DB1 DB0
 	// 0   0   0   0   1  DL   N   F   X   X
-	register_select_.setValue(false);
-	read_write_.setValue(false);
-	std::cout << "Set Function ";
-	setDataBits((std::bitset<8>) "00110000");
-	pulseEnableSignal();
+	std::cout << "Set Function";
+	sendCommand((std::bitset<10>) "0000110000");
 	// Bit 4: 1 = 8 bit data length
 	// Bit 3: 1 = 2 active display lines
 	// Bit 2: 0 = Font 5x8 bits
 }
+
 void Display::displayOnOffFunction() {
 	// RS R/W DB7 DB6 DB5 DB4 DB3 DB2 DB1 DB0
 	// 0   0   0   0   0   0   1   D   C   B
-	register_select_.setValue(false);
-	read_write_.setValue(false);
 	std::cout << "Display on/off ";
-	setDataBits((std::bitset<8>) "00001111");
-	pulseEnableSignal();
+	sendCommand((std::bitset<10>) "0000001111");
 }
+
 void Display::home() {
 	// RS R/W DB7 DB6 DB5 DB4 DB3 DB2 DB1 DB0
 	// 0   0   0   0   0   0   0   0   1   X
-	register_select_.setValue(false);
-	read_write_.setValue(false);
 	std::cout << "Home ";
-	setDataBits((std::bitset<8>) "00000010");
-	pulseEnableSignal();
-
+	sendCommand((std::bitset<10>) "0000000010");
 }
+
 void Display::clear() {
 // RS R/W DB7 DB6 DB5 DB4 DB3 DB2 DB1 DB0
 // 0   0   0   0   0   0   0   0   0   1
-	register_select_.setValue(false);
-	read_write_.setValue(false);
 	std::cout << "Clear ";
-	setDataBits((std::bitset<8>) "00000001");
+	sendCommand((std::bitset<10>) "0000000001");
 }
 
 void Display::setEntryMode() {
 	// RS R/W DB7 DB6 DB5 DB4 DB3 DB2 DB1 DB0
 	// 0   0   0   0   0   0   0   1   1   1
-	register_select_.setValue(false);
-	read_write_.setValue(false);
 	std::cout << "Set Entry Mode ";
-	setDataBits((std::bitset<8>) "00000111");
+	sendCommand((std::bitset<10>) "0000000110");
 }
 
 void Display::setEntryAddress() {
 	// RS R/W DB7 DB6 DB5 DB4 DB3 DB2 DB1 DB0
 	// 0   0   0   0   0   0   0   0   0   0
-	register_select_.setValue(false);
-	read_write_.setValue(false);
 	std::cout << "Set Entry Address ";
-	setDataBits((std::bitset<8>) "10000000");
+	sendCommand((std::bitset<10>) "0010000000");
 }
