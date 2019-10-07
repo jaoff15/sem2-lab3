@@ -5,10 +5,9 @@
  *      Author: jacoboffersen
  */
 
-#include "Gpio.h"
+#include "gpio.h"
 
 Gpio::Gpio() {
-	initialized_ = false;
 	gpio_path_ = "/sys/class/gpio";
 }
 
@@ -44,27 +43,25 @@ int Gpio::exportPin() {
 
 		// Close the file
 		export_file.close();
+		path_ = gpio_path_ + "/gpio" + pin_;
+
+		// Write direction
+		Gpio::setDirection(in);  // Default high impedance direction
+		return 0;
 	}
-
-	path_ = gpio_path_ + "/gpio" + pin_;
-
-	// Write direction
-	Gpio::setDirection(in);
-	initialized_ = true;
-
-	return 0;
+	return -1;
 }
 
 int Gpio::unexportPin() {
 	if (!LOCAL) {
 		// Define path
-		std::string unexport_path = gpio_path_ + "/unexport";
+		std::string file_path = gpio_path_ + "/unexport";
 		// Open file
-		std::ofstream unexport_file(unexport_path.c_str());
+		std::ofstream unexport_file(file_path.c_str());
 
 		// Check if the file was actually opened
 		if (!unexport_file.is_open()) {
-			std::cerr << "Unable to open " << unexport_path << std::endl;
+			std::cerr << "Unable to open " << file_path << std::endl;
 			return -1;
 		}
 		// Write pin numbers to file
@@ -72,13 +69,13 @@ int Gpio::unexportPin() {
 
 		// Close the file
 		unexport_file.close();
+		return 0;
 	}
-
-	return 0;
+	return 1;
 }
 
 int Gpio::setDirection(const Direction dir) {
-	if (initialized_ && !LOCAL) {
+	if (path_ != "" && !LOCAL) {
 		std::string direction_path = path_ + "/direction";
 		std::ofstream file(direction_path.c_str());
 		if (!file.is_open()) {
@@ -86,11 +83,7 @@ int Gpio::setDirection(const Direction dir) {
 			return -1;
 		}
 		// Write directions to the file
-		if (dir == out) {
-			file << "out";
-		} else {
-			file << "in";
-		}
+		file << (dir == out ? "out" : "in");
 
 		// Close the file
 		file.close();
@@ -100,7 +93,7 @@ int Gpio::setDirection(const Direction dir) {
 }
 
 int Gpio::setValue(const bool value) {
-	if (initialized_ && !LOCAL) {
+	if (path_ != "" && !LOCAL) {
 		// Define path
 		std::string write_path = path_ + "/value";
 
@@ -111,18 +104,14 @@ int Gpio::setValue(const bool value) {
 			return -1;
 		}
 		// Write value
-		if (value == true) {
-			write_file << "1";
-		} else {
-			write_file << "0";
-		}
+		write_file << (value == true ? "1" : "0");
 		return 0;
 	}
 	return 1;
 }
 
 int Gpio::getValue(bool *value) {
-	if (initialized_ && !LOCAL) {
+	if (path_ != "" && !LOCAL) {
 		// Define read path
 		std::string read_path = path_ + "/value";
 		std::ifstream read_file(read_path.c_str());
@@ -140,6 +129,3 @@ int Gpio::getValue(bool *value) {
 	return 1;
 }
 
-std::string Gpio::getPin() {
-	return pin_;
-}

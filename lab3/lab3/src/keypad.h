@@ -12,7 +12,7 @@
 #include <string>
 #include <iostream>
 
-#include "Gpio.h"
+#include "gpio.h"
 
 #define KEYPAD_PIN_COL_BASE 992
 #define KEYPAD_PIN_COL_LEN 4

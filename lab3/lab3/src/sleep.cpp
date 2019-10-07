@@ -5,7 +5,7 @@
  *      Author: jacoboffersen
  */
 
-#include "Sleep.h"
+#include "sleep.h"
 
 Sleep::Sleep() {
 }

@@ -8,12 +8,11 @@
 #ifndef DISPLAY_H_
 #define DISPLAY_H_
 
-#include "Gpio.h"
-#include "Sleep.h"
-
 #include <iostream>       // std::cout
 #include <string>         // std::string
 #include <bitset>         // std::bitset
+#include "gpio.h"
+#include "sleep.h"
 
 #define DISPLAY_RS_PIN 		1012
 #define DISPLAY_RW_PIN 		1013

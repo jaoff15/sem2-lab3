@@ -5,14 +5,13 @@
  *      Author: jacoboffersen
  */
 
-#include "Keypad.h"
+#include "keypad.h"
 
 Keypad::Keypad() {
 	initialized_ = false;
 	width_ = 4;
 	height_ = 4;
 	last_keys_pressed = "";
-
 }
 
 Keypad::~Keypad() {
