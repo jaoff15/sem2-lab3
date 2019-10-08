@@ -15,10 +15,10 @@ Sleep::~Sleep() {
 }
 
 void Sleep::microsecond(const unsigned int time) {
-	std::this_thread::sleep_for(std::chrono::microseconds(time));
+	usleep(time);
 }
 
 void Sleep::millisecond(const unsigned int time) {
-	std::this_thread::sleep_for(std::chrono::milliseconds(time));
+	usleep(time * 1000);
 }
 

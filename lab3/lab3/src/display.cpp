@@ -20,18 +20,24 @@ void Display::init() {
 	initDisplay();
 }
 
-void Display::print(std::string str) {
+void Display::print(std::string line1, std::string line2) {
 	clear();  										// Clear display
 	home();
-	for (int j = 0; j < DISPLAY_HEIGHT; j++) {  	// For each row
-		for (int i = 0; i < DISPLAY_WIDTH; i++) {  	// For each character in row
-			unsigned int character_id = j * DISPLAY_WIDTH + i;
-			if (character_id < str.length()) {
-				sendData(str[character_id]);		// Send data character to display
+	for (unsigned int j = 0; j < DISPLAY_HEIGHT; j++) {  	// For each row
+		setEntryAddress(j);
+//		setEntryAddress(0);
+		sleep.microsecond(60);
+		std::string str = (j == 0 ? line1 : line2);
+		std::cout << "j: " << j << "  " << str << std::endl;
+		for (unsigned int i = 0; i < DISPLAY_WIDTH; i++) {  	// For each character in row
+			if (i < str.length()) {
+				sendData(str[i]);		// Send data character to display
 			} else {
-				break;								// If the string is empty. Break the loop
+//				break;								// If the string is empty. Break the loop
 			}
 		}
+//		break;
+
 	}
 }
 
@@ -71,7 +77,8 @@ int Display::initDisplay() {
 	setFunction();
 
 // Wait 37us
-	sleep.microsecond(37);
+//	sleep.microsecond(37);
+	sleep.microsecond(60);
 
 // Display On/Off Control
 	displayOnOffFunction();
@@ -87,7 +94,7 @@ int Display::initDisplay() {
 
 	setEntryMode();
 	sleep.microsecond(60);
-	setEntryAddress();
+	setEntryAddress(0);
 	sleep.microsecond(60);
 
 // OK
@@ -150,7 +157,12 @@ void Display::sendData(const char data) {
 void Display::setFunction() {
 	// RS R/W DB7 DB6 DB5 DB4 DB3 DB2 DB1 DB0
 	// 0   0   0   0   1  DL   N   F   X   X
-	sendCommand((std::bitset<10>) "0000110000");
+	// Set interface data length DL ('1' for 8 bit)
+	// Number of display lines N ('1' for 2 lines)
+	// Font F ('0' for 5×8 dots)
+
+	sendCommand((std::bitset<10>) "0000111000");
+//	sendCommand((std::bitset<10>) "0000110000");
 }
 
 void Display::displayOnOffFunction() {
@@ -177,8 +189,14 @@ void Display::setEntryMode() {
 	sendCommand((std::bitset<10>) "0000000110");
 }
 
-void Display::setEntryAddress() {
+void Display::setEntryAddress(const int line_number) {
 	// RS R/W DB7 DB6 DB5 DB4 DB3 DB2 DB1 DB0
 	// 0   0   0   0   0   0   0   0   0   0
-	sendCommand((std::bitset<10>) "0010000000");
+	if (line_number == 1) {
+		sendCommand((std::bitset<10>) "0011000000");  // Line 1 (bottom line) = 0x40
+	} else {
+		sendCommand((std::bitset<10>) "0010000000");  // Line 0 (top) and default = 0x00
+	}
+//	sendCommand((std::bitset<10>) "0010000000");  // Line 1 (bottom line) = 0x40
+
 }

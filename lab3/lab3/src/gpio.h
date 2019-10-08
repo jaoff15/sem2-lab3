@@ -13,6 +13,7 @@
 #include <iostream>
 #include <sstream>
 #include <unistd.h>
+#include "sleep.h"
 
 #define LOCAL false		// Disable IO handling for local tests on pc
 
@@ -47,7 +48,7 @@ public:
 	int getValue(bool *value);
 
 private:
-
+	Sleep sleep;
 	std::string gpio_path_;  // Path to the GPIO
 	std::string path_;		 // Path to the pin itself
 	std::string pin_;		 // Pin number

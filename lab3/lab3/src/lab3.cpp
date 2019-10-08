@@ -12,10 +12,11 @@
 #include "keypad.h"
 
 int main() {
-	std::string str = "Dickbutt";
+	std::string str1 = "8==============D";
+	std::string str2 = "Its a rocketship";
 	Display display;
 	display.init();
-	display.print(str);
+	display.print(str1, str2);
 
 	Keypad keypad;
 	keypad.init();
@@ -23,20 +24,22 @@ int main() {
 	Sleep sleep;
 
 	std::cout << "Started" << std::endl;
+
 	while (1) {
 		std::string key = keypad.NumpadDriver();
 		if (key != "") {
 			std::cout << key << std::endl;
+
 			if (key == "1D") {
-				str = "";
+				str1 = "";
 				sleep.millisecond(500);
 			} else {
-				if (str.length() >= 16) {	// Remove first element if string becomes too long
-					str = str.substr(1);
+				if (str1.length() >= 16) {	// Remove first element if string becomes too long
+					str1 = str1.substr(1);
 				}
-				str += key;
+				str1 += key;
 			}
-			display.print(str);
+			display.print(str1, "");
 		}
 	}
 	return 0;

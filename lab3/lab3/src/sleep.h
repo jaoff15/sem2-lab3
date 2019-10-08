@@ -8,10 +8,9 @@
 #ifndef SLEEP_H_
 #define SLEEP_H_
 
-#include <chrono>         // std::chrono::seconds
-#include <thread>         // std::this_thread::sleep_for
-#include <iostream>       // std::cout
+#include <iostream>
 #include <string>         // std::string
+#include <unistd.h>
 
 class Sleep {
 public:

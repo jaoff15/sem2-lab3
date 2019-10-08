@@ -31,7 +31,7 @@ public:
 	virtual ~Display();
 
 	void init();
-	void print(std::string str);
+	void print(std::string line1, std::string line2);
 
 private:
 	Gpio data_bit_[DISPLAY_DATA_LEN];
@@ -54,7 +54,7 @@ private:
 	void clear();
 	void home();
 	void setEntryMode();
-	void setEntryAddress();
+	void setEntryAddress(const int line_number);
 
 };
 
