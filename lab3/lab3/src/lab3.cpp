@@ -12,8 +12,8 @@
 #include "keypad.h"
 
 int main() {
-	std::string str1 = "What is it? 8==D";
-	std::string str2 = "A Rocketship5";
+	std::string str1 = "Line 1";
+	std::string str2 = "Line 2";
 	Display display;
 	display.init();
 	display.print(str1, str2);
@@ -26,9 +26,6 @@ int main() {
 	std::cout << "Started" << std::endl;
 
 	while (1) {
-
-//		sleep.millisecond(500);
-//		display.print("Test 1", "Test 2");
 
 		std::string key = keypad.NumpadDriver();
 		if (key != "") {
@@ -43,7 +40,7 @@ int main() {
 				}
 				str1 += key;
 			}
-			display.print(str1, "");
+			display.print(str1, key);
 		}
 	}
 	return 0;
