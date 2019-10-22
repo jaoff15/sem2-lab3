@@ -47,6 +47,8 @@ public:
 	/* Read pin value */
 	int getValue(bool *value);
 
+	std::string getPin();
+
 private:
 	Sleep sleep;
 	std::string gpio_path_;  // Path to the GPIO
